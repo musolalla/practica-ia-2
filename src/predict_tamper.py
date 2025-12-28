@@ -12,28 +12,29 @@ def preprocess(path):
     arr = np.array(img, dtype=np.float32) / 255.0
     return arr.reshape(1, -1)
 
-def status_from_prob(p, thr=0.5):
-    return "MANIPULADA" if p >= thr else "Original"
+def status(prob, thr=0.5):
+    return "MANIPULADA" if prob >= thr else "Original"
 
 def main():
+    if not os.path.exists(MODEL_PATH):
+        raise SystemExit(f"No encuentro el modelo: {MODEL_PATH}. Ejecuta primero train_tamper_detector.py")
+
     clf = joblib.load(MODEL_PATH)
 
     paths = sorted([p for p in glob.glob(os.path.join(IN_DIR, "*"))
                     if p.lower().endswith((".jpg",".jpeg",".png"))])
 
-    os.makedirs("outputs", exist_ok=True)
     out_csv = "outputs/report_tamper.csv"
-
     with open(out_csv, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["Imagen ID", "Región Analizada", "Prob. Manipulación", "Estado"])
         for p in paths:
             X = preprocess(p)
-            prob = float(clf.predict_proba(X)[0, 1])  # prob clase 1 = manipulada
-            w.writerow([os.path.basename(p), "Global", f"{prob*100:.1f}%", status_from_prob(prob)])
+            prob = float(clf.predict_proba(X)[0, 1])
+            w.writerow([os.path.basename(p), "Global", f"{prob*100:.1f}%", status(prob)])
 
-    print(f"✅ Reporte generado: {out_csv}")
-    print("Muestra (primeras filas):")
+    print("✅ CSV creado:", out_csv)
+    print("Vista previa:")
     with open(out_csv, "r", encoding="utf-8") as f:
         for i, line in enumerate(f):
             print(line.strip())

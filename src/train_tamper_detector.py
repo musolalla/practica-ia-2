@@ -17,12 +17,10 @@ clf = LogisticRegression(max_iter=3000)
 clf.fit(X_train, y_train)
 
 pred = clf.predict(X_test)
-acc = accuracy_score(y_test, pred)
-cm = confusion_matrix(y_test, pred)
+print("✅ Detector entrenado")
+print("Accuracy:", accuracy_score(y_test, pred))
+print("Confusion matrix:\n", confusion_matrix(y_test, pred))
 
 os.makedirs("outputs/models", exist_ok=True)
 joblib.dump(clf, "outputs/models/tamper_lr.joblib")
-
-print("✅ Detector entrenado y guardado en outputs/models/tamper_lr.joblib")
-print("Accuracy:", acc)
-print("Confusion matrix:\n", cm)
+print("✅ Modelo guardado en outputs/models/tamper_lr.joblib")
