@@ -1,0 +1,14 @@
+# datos e outputs (no subir imágenes ni resultados pesados)
+data/raw/manual/*
+!data/raw/manual/.gitkeep
+outputs/*
+!outputs/.gitkeep
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# jupyter
+.ipynb_checkpoints/
